@@ -241,8 +241,8 @@ class ALSRecommender(BaseRecommender):
             random_state=self.random_state,
         )
 
-        # implicit expects item-user matrix (transposed)
-        self.model.fit(interaction_matrix.T.tocsr())
+        # implicit expects user-item matrix (CSR format)
+        self.model.fit(interaction_matrix.tocsr())
 
         self.is_fitted = True
         logger.info("ALS model trained")

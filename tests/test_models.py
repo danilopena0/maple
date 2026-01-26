@@ -5,7 +5,7 @@ import pytest
 from scipy.sparse import csr_matrix
 
 from src.models.popularity import PopularityRecommender
-from src.models.collaborative import ItemKNNRecommender, UserKNNRecommender
+from src.models.collaborative import ItemKNNRecommender, UserKNNRecommender, ALSRecommender
 
 
 @pytest.fixture
@@ -143,6 +143,52 @@ class TestUserKNNRecommender:
         assert all(isinstance(r, tuple) for r in recs)
 
 
+class TestALSRecommender:
+    """Tests for ALSRecommender."""
+
+    def test_fit(self, sample_interaction_matrix):
+        """Test model fitting."""
+        model = ALSRecommender(factors=8, iterations=5)
+        model.fit(sample_interaction_matrix)
+
+        assert model.is_fitted
+        assert model.n_users == 5
+        assert model.n_items == 10
+
+    def test_recommend(self, sample_interaction_matrix):
+        """Test recommendation generation."""
+        model = ALSRecommender(factors=8, iterations=5)
+        model.fit(sample_interaction_matrix)
+
+        recs = model.recommend(user_idx=0, n=5, exclude_seen=True)
+
+        assert len(recs) > 0
+        assert all(isinstance(r, tuple) for r in recs)
+        assert all(len(r) == 2 for r in recs)
+
+    def test_similar_items(self, sample_interaction_matrix):
+        """Test similar items functionality."""
+        model = ALSRecommender(factors=8, iterations=5)
+        model.fit(sample_interaction_matrix)
+
+        similar = model.get_similar_items(item_idx=0, n=3)
+
+        assert len(similar) <= 3
+        # Item 0 should not be in its own similar items
+        assert all(item_idx != 0 for item_idx, _ in similar)
+
+    def test_embeddings(self, sample_interaction_matrix):
+        """Test user and item embeddings."""
+        model = ALSRecommender(factors=8, iterations=5)
+        model.fit(sample_interaction_matrix)
+
+        user_emb = model.get_user_embedding(0)
+        item_emb = model.get_item_embedding(0)
+
+        assert user_emb.shape == (8,)
+        assert item_emb.shape == (8,)
+
+
 class TestModelComparison:
     """Tests comparing different models."""
 
@@ -152,6 +198,7 @@ class TestModelComparison:
             PopularityRecommender(),
             ItemKNNRecommender(k=3),
             UserKNNRecommender(k=3),
+            ALSRecommender(factors=8, iterations=5),
         ]
 
         for model in models:
