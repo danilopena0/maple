@@ -165,9 +165,10 @@ class DataLoader:
         # Calculate interaction values
         if weighted:
             df["value"] = df["interaction_type"].map(INTERACTION_WEIGHTS)
-            # For ratings, multiply by rating value
-            mask = (df["interaction_type"] == "rating") & df["rating"].notna()
-            df.loc[mask, "value"] = df.loc[mask, "rating"]
+            # For ratings, multiply by rating value (if rating column exists)
+            if "rating" in df.columns:
+                mask = (df["interaction_type"] == "rating") & df["rating"].notna()
+                df.loc[mask, "value"] = df.loc[mask, "rating"]
         else:
             df["value"] = 1.0
 
