@@ -74,6 +74,11 @@ logs/
 .DS_Store
 Thumbs.db
 
+# Autoresearch generated files
+autoresearch/data/
+autoresearch/history.jsonl
+autoresearch/best/
+
 # Temporary
 tmp/
 temp/

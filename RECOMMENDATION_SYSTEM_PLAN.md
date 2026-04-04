@@ -398,38 +398,36 @@ ndcg = RetrievalNormalizedDCG(top_k=20)
 ```
 maple/
 ├── RECOMMENDATION_SYSTEM_PLAN.md    # This file
-├── notebooks/
-│   ├── 01_eda.ipynb                 # Exploratory Data Analysis
-│   ├── 02_baseline.ipynb            # Popularity & Co-visitation baselines
-│   ├── 03_matrix_factorization.ipynb
-│   ├── 04_ncf.ipynb                 # Neural Collaborative Filtering
-│   ├── 05_session_based.ipynb       # GRU4Rec / SASRec
-│   └── 06_evaluation.ipynb          # Final evaluation & comparison
 ├── src/
-│   ├── __init__.py
+│   ├── api/                         # FastAPI REST API
 │   ├── data/
-│   │   ├── __init__.py
-│   │   ├── dataset.py               # PyTorch Dataset classes
-│   │   ├── preprocessing.py         # Data cleaning & feature engineering
-│   │   └── utils.py                 # Data utilities
+│   │   ├── loader.py                # Data loading & interaction matrix
+│   │   ├── schemas.py               # Pydantic data models
+│   │   └── validation.py            # Pandera validation & drift detection
 │   ├── models/
-│   │   ├── __init__.py
-│   │   ├── matrix_factorization.py
-│   │   ├── ncf.py
-│   │   ├── gru4rec.py
-│   │   └── sasrec.py
-│   ├── training/
-│   │   ├── __init__.py
-│   │   ├── trainer.py               # Training loop
-│   │   ├── losses.py                # BPR, BCE, etc.
-│   │   └── metrics.py               # Recall@K, NDCG, etc.
-│   └── utils/
-│       ├── __init__.py
-│       └── config.py                # Hyperparameters
-├── configs/
-│   └── default.yaml                 # Training configurations
-├── tests/
-│   └── test_models.py
+│   │   ├── base.py                  # Abstract BaseRecommender
+│   │   ├── popularity.py            # Popularity baseline
+│   │   ├── collaborative.py         # Item-KNN, User-KNN, ALS
+│   │   ├── content_based.py         # Content-based filtering
+│   │   ├── neural.py                # Neural network models
+│   │   ├── hybrid.py                # Hybrid (CF + content, FeatureAugmentedCF)
+│   │   └── ensemble.py              # Ensemble methods
+│   ├── evaluation/
+│   │   └── metrics.py               # Precision@K, Recall@K, NDCG, MRR, MAP, etc.
+│   ├── tracking/
+│   │   └── mlflow_tracker.py        # MLflow experiment tracking
+│   ├── tuning/
+│   │   └── optuna_tuner.py          # Optuna hyperparameter tuning
+│   └── monitoring/
+│       └── monitor.py               # Drift detection & alerting
+├── tests/                           # Unit tests
+├── scripts/
+│   └── generate_sample_data.py      # Generate sample interaction data
+├── examples/
+│   ├── quickstart.py
+│   └── mlflow_tracking_example.py
+├── docs/                            # Additional documentation
+├── data/                            # Data directory
 └── requirements.txt
 ```
 
@@ -468,19 +466,30 @@ maple/
 ## Quick Start
 
 ```bash
-# 1. Clone this repo and navigate to it
+# 1. Clone this repo and set up the environment
 cd maple
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# 2. Open Kaggle or Colab and run:
-!pip install torch pandas polars torchmetrics matplotlib seaborn
+# 2. Install dependencies
+pip install -r requirements.txt
 
-# 3. Download OTTO dataset (in Kaggle notebook):
-# - Go to kaggle.com/datasets/otto/recsys-dataset
-# - Click "Add to notebook" or download
+# 3. Configure environment
+cp .env.example .env
 
-# 4. Start with notebooks/01_eda.ipynb
+# 4. Generate sample data and run a quick example
+python scripts/generate_sample_data.py
+python examples/quickstart.py
+
+# 5. Start the API
+python -m src.api.main
+# Docs at http://localhost:8000/docs
 ```
+
+For cloud-based training on larger datasets (OTTO, Amazon):
+- **Kaggle Notebooks** — 30 hrs/week free GPU (P100/T4), background execution
+- **Google Colab** — ~30 hrs/week free T4, good for prototyping
 
 ---
 
-*Last updated: January 2025*
+*Last updated: March 2026*

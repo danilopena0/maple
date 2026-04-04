@@ -9,37 +9,66 @@ A modular product recommendation system built with Python.
   - Item-based Collaborative Filtering (KNN)
   - User-based Collaborative Filtering (KNN)
   - Matrix Factorization (ALS)
+  - Content-based, Neural, Hybrid, and Ensemble models
 
 - **Comprehensive Evaluation**
   - Precision@K, Recall@K, NDCG@K
   - Hit Rate, MRR, MAP
   - Coverage and Diversity metrics
 
+- **ML Operations**
+  - MLflow experiment tracking
+  - Optuna hyperparameter tuning
+  - Model monitoring with drift detection and alerts
+  - Pandera data validation
+
 - **REST API**
   - FastAPI-based recommendation service
   - Endpoints for user recommendations, similar items, and popular items
 
-## Installation
+## Getting Started
+
+### Prerequisites
+
+- Python 3.10+ (3.11 or 3.12 recommended)
+- WSL (Ubuntu) or native Linux
+
+### 1. Clone and Set Up the Virtual Environment
 
 ```bash
-# Clone the repository
 git clone https://github.com/your-org/maple.git
 cd maple
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Or install as package
-pip install -e .
+python3 -m venv venv
+source venv/bin/activate
 ```
 
-## Quick Start
+### 2. Install Dependencies
 
-### 1. Generate Sample Data
+```bash
+pip install -r requirements.txt
+```
+
+Or install as an editable package (useful for development):
+
+```bash
+pip install -e ".[dev]"
+```
+
+### 3. Configure Environment Variables
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` as needed:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MAPLE_DATA_PATH` | Path to interaction data CSV (auto-loaded on API startup) | `data/sample/interactions.csv` |
+| `MLFLOW_TRACKING_URI` | MLflow tracking server URI | `./mlruns` |
+
+### 4. Generate Sample Data
 
 ```bash
 python scripts/generate_sample_data.py
@@ -47,13 +76,13 @@ python scripts/generate_sample_data.py
 
 This creates sample interaction data in `data/sample/`.
 
-### 2. Run the Example
+### 5. Run the Quickstart Example
 
 ```bash
 python examples/quickstart.py
 ```
 
-### 3. Start the API
+### 6. Start the API
 
 ```bash
 python -m src.api.main
@@ -130,10 +159,13 @@ print_evaluation_results(results, "Item-KNN")
 ```
 maple/
 ├── src/
-│   ├── api/           # REST API
-│   ├── data/          # Data loading and schemas
+│   ├── api/           # REST API (FastAPI)
+│   ├── data/          # Data loading, schemas, validation
 │   ├── evaluation/    # Metrics and evaluation
-│   └── models/        # Recommendation models
+│   ├── models/        # Recommendation models
+│   ├── monitoring/    # Model monitoring and drift detection
+│   ├── tracking/      # MLflow experiment tracking
+│   └── tuning/        # Optuna hyperparameter tuning
 ├── tests/             # Unit tests
 ├── scripts/           # Utility scripts
 ├── examples/          # Usage examples
