@@ -26,6 +26,23 @@ A modular product recommendation system built with Python.
   - FastAPI-based recommendation service
   - Endpoints for user recommendations, similar items, and popular items
 
+## Exploration & Visualization
+
+An interactive Jupyter notebook is available at [`notebooks/explore.ipynb`](notebooks/explore.ipynb) that covers:
+
+- Dataset overview: interaction types, activity over time, products by category
+- User activity and product popularity distributions (power-law)
+- Interaction matrix sparsity heatmap
+- Train all models in one cell and compare evaluation metrics (Precision, Recall, NDCG, Hit Rate)
+- Inspect recommendations for any specific user, side-by-side across models
+- Similar items lookup for any product
+- Top popular products chart
+
+```bash
+source venv/bin/activate
+jupyter notebook notebooks/explore.ipynb
+```
+
 ## Getting Started
 
 ### Prerequisites
